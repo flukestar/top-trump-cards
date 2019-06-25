@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 import random
-import time
-
+import tim
 deck = [
     {"name": "prickler", "age": 10, "attack": 40, "speed": 38, "clever": 18},
     {"name": "ghost", "age": 10, "attack": 50, "speed": 10, "clever": 33},
