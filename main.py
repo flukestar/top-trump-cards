@@ -86,31 +86,35 @@ def game_main(players_amount, players_hand):
     current_player = 0
     current_round = []
     compare_stats = []
+    players_amount = int(players_amount)
+
+    for i in range(players_amount):
+        drawn = deal_card(players_hand[i])
+        current_round.append(drawn)
 
     while True:
-        for i in range(players_amount):
-            drawn = deal_card(players_hand[i])
-            current_round.append(drawn)
+        show_card(current_round[current_player])
+        user_select = input("Pick an attribute. ")
+        user_select = check_user_input(user_select, 4)
+        if user_select not in range(1, 5):
+            print("Please try again\n")
+        else:
+            stat_type = stat_choice[user_select]
+            print(f"You picked {stat_type}\n")
+            break
 
-        while True:
-            show_card(current_round[current_player])
+    # for i in range(players_amount):
+    p_no = 1
+    for hand in current_round:
+        stat_amount = hand[stat_choice[user_select]]
+        print(f"Player {p_no} had {stat_amount} for {stat_type}")
+        compare_stats.append(stat_amount)
+        p_no += 1
 
-            user_select = input("Pick an attribute. ")
-            user_select = check_user_input(user_select, 4)
-            if user_select not in range(4):
-                print()
-                continue
-            else:
-                stat_type = stat_choice[user_select]
-                print(f"You picked {stat_type}\n")
-                for i in range(players_amount):
-                    stat_amount = current_round[i][stat_choice[user_select]]
-                    print(f"Player {i + 1} had {stat_amount} for {stat_type}")
-                    compare_stats.append(stat_amount)
-                max_num = max(compare_stats)
-                print("\nHighest stat =", max_num)
-                winners = [i for i, x in enumerate(compare_stats) if x == "max_num"]
-                print(winners)
+    max_value = max(compare_stats)
+    print("Max Value is", max_value)
+    res_list = [i for i, value in enumerate(compare_stats) if value == max_value]
+    print("Indices:", res_list)
 
 
 # Game Menu
@@ -120,7 +124,7 @@ def play_game():
         how_many_players = input("Please select how many players (1 to 6)?\n> ")
         players_amount = check_user_input(how_many_players, 6)
         if players_amount != None:
-            print("hello")
+            print("Great")
             break
         else:
             print()
@@ -130,7 +134,7 @@ def play_game():
     players = create_player(players_amount)
     print("Dealing cards...")
     players_hand = deal_deck(players, deck)
-    game_main(players_amount, players_hand)
+    game_main(how_many_players, players_hand)
 
 
 # Start Menu
