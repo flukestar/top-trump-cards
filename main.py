@@ -80,41 +80,69 @@ def check_user_input(user_select, menu_items):
         print("That ain't a number fool")
 
 
+def show_all_cards(players_hand):
+    for player, cards in enumerate(players_hand, 1):
+        print(f"Player {player} has {len(cards)} cards:")
+        for card in cards:
+            print(card)
+
+
 def game_main(players_amount, players_hand):
-
-    stat_choice = {1: "age", 2: "attack", 3: "speed", 4: "clever"}
     current_player = 0
-    current_round = []
-    compare_stats = []
-    players_amount = int(players_amount)
-
-    for i in range(players_amount):
-        drawn = deal_card(players_hand[i])
-        current_round.append(drawn)
+    stalemate_pile = []
 
     while True:
-        show_card(current_round[current_player])
-        user_select = input("Pick an attribute. ")
-        user_select = check_user_input(user_select, 4)
-        if user_select not in range(1, 5):
-            print("Please try again\n")
+        for hand in players_hand:
+            print(len(hand))
+        print()
+        # show_all_cards(players_hand)
+
+        stat_choice = {1: "age", 2: "attack", 3: "speed", 4: "clever"}
+        current_round = []
+        compare_stats = []
+        players_amount = int(players_amount)
+
+        print(f"Player {current_player + 1} turn to go")
+        for i in range(players_amount):
+            if len(players_hand[i]) >= 1:
+                drawn = deal_card(players_hand[i])
+                current_round.append(drawn)
+            else:
+                current_round.append([])
+
+        while True:
+            show_card(current_round[current_player])
+            user_select = input("Pick an attribute. ")
+            user_select = check_user_input(user_select, 4)
+            if user_select not in range(1, 5):
+                print("Please try again\n")
+            else:
+                stat_type = stat_choice[user_select]
+                print(f"You picked {stat_type}\n")
+                break
+
+        p_no = 1
+        for hand in current_round:
+            stat_amount = hand[stat_choice[user_select]]
+            print(f"Player {p_no} had {stat_amount} for {stat_type}")
+            compare_stats.append(stat_amount)
+            p_no += 1
+
+        max_value = max(compare_stats)
+        print("Max Value is", max_value)
+        winners = [i for i, value in enumerate(compare_stats) if value == max_value]
+
+        if len(winners) > 1:
+            print("Game is a draw!")
+            stalemate_pile += current_round
         else:
-            stat_type = stat_choice[user_select]
-            print(f"You picked {stat_type}\n")
-            break
-
-    # for i in range(players_amount):
-    p_no = 1
-    for hand in current_round:
-        stat_amount = hand[stat_choice[user_select]]
-        print(f"Player {p_no} had {stat_amount} for {stat_type}")
-        compare_stats.append(stat_amount)
-        p_no += 1
-
-    max_value = max(compare_stats)
-    print("Max Value is", max_value)
-    res_list = [i for i, value in enumerate(compare_stats) if value == max_value]
-    print("Indices:", res_list)
+            print("Current player was:", current_player)
+            current_player = winners[0]
+            print("Current player is now:", current_player)
+            print(" Player", current_player + 1, "is the winner!")
+            players_hand[current_player] = (
+                stalemate_pile + current_round + players_hand[current_player]
+            )
 
 
 # Game Menu
